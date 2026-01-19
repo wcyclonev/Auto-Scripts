@@ -1,4 +1,4 @@
-name: CastleHost Auto Renew
+name: Castlehost Auto Renew
 
 on:
   schedule:
