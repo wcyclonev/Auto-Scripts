@@ -1,4 +1,4 @@
-name: Weirdhost Auto Renew
+name: Weirdhost-KR6 Auto Renew
 
 on:
   schedule:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout private repo
         uses: actions/checkout@v4
         with:
-          repository: kamancyclone/Weirdhost-Kr6-Auto-Renew
+          repository: kamancyclone/Weirdhost-KR6-Auto-Renew
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: scripts
       
