@@ -1,4 +1,4 @@
-name: GreatHost Auto Renew
+name: Greathost Auto Renew
 
 on:
   schedule:
