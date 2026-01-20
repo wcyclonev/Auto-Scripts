@@ -13,7 +13,7 @@ jobs:
     - name: Checkout private repo
       uses: actions/checkout@v4
       with:
-        repository: kamancyclone/HidenCloud-Auto-Renew
+        repository: ${{ github.repository_owner }}/HidenCloud-Auto-Renew
         token: ${{ secrets.PRIVATE_REPO_TOKEN }}
         path: scripts
 
