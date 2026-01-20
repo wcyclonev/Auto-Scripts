@@ -15,7 +15,7 @@ jobs:
       - name: Checkout private repo
         uses: actions/checkout@v4
         with:
-          repository: kamancyclone/Ultrahost-Keep-Alive  # 私库的仓库位置
+          repository: ${{ github.repository_owner }}/Ultrahost-Keep-Alive  # 私库的仓库位置
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: scripts
       
