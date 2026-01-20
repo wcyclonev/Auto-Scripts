@@ -12,7 +12,7 @@ jobs:
       - name: Checkout private scripts
         uses: actions/checkout@v4
         with:
-          repository: kamancyclone/Castlehost-Auto-Renew
+          repository: ${{ github.repository_owner }}/Castlehost-Auto-Renew
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: scripts
 
