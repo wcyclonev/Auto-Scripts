@@ -50,21 +50,13 @@ jobs:
       - name: Run login script
         working-directory: scripts
         env:
+          DISCORD_EMAIL: ${{ secrets.DISCORD_EMAIL }}
+          DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           OPTIKLINK_SOCKS_PROXY: ${{ secrets.OPTIKLINK_SOCKS_PROXY }}
           USE_GOST_PROXY: ${{ secrets.OPTIKLINK_SOCKS_PROXY != '' && 'true' || 'false' }}
         run: python main.py
-
-      - name: Upload updated session to private repo
-        if: success()
-        working-directory: scripts
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add OPTIKLINK_DISCORD_SESSION.json
-          git diff --staged --quiet || git commit -m "chore: update Discord session [skip ci]"
-          git push || echo "No changes to push"
 
       - name: Upload screenshots
         if: always()
