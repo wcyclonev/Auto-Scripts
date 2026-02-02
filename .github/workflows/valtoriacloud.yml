@@ -1,4 +1,4 @@
-name: Valtoria Cloud Auto Renew
+name: ValtoriaCloud Auto Renew
 
 on:
   schedule:
