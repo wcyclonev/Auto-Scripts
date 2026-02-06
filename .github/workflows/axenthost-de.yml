@@ -1,9 +1,9 @@
 name: Axenthost-DE Auto Claim
 
-on:
-  schedule:
+# on:
+#  schedule:
     # 每小时运行一次
-    - cron: '5 * * * *'
+#    - cron: '5 * * * *'
   workflow_dispatch:  # 支持手动触发
 
 jobs:
