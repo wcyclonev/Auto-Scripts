@@ -1,6 +1,6 @@
 name: Axenthost-DE Auto Claim
 
-# on:
+on:
 #  schedule:
     # 每小时运行一次
 #    - cron: '5 * * * *'
