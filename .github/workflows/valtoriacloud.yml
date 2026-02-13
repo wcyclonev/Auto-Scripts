@@ -25,14 +25,6 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'scripts/requirements.txt'
 
-      - name: Cache Browser Data
-        uses: actions/cache@v4
-        with:
-          path: scripts/.browser_cache
-          key: browser-cache-${{ runner.os }}-${{ hashFiles('scripts/VALTORIA_DISCORD_SESSION.json') }}
-          restore-keys: |
-            browser-cache-${{ runner.os }}-
-
       - name: Install dependencies
         working-directory: scripts
         run: pip install -r requirements.txt -q > /dev/null 2>&1
@@ -45,14 +37,14 @@ jobs:
         working-directory: scripts
         run: python main.py
 
-      - name: Commit Updated Session
+      - name: Commit Updated Session and Fingerprint
         if: success()
         working-directory: scripts
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add VALTORIA_DISCORD_SESSION.json
-          git diff --staged --quiet || git commit -m "Update Discord session [skip ci]"
+          git add VALTORIA_DISCORD_SESSION.json BROWSER_FINGERPRINT.json
+          git diff --staged --quiet || git commit -m "Update Discord session and fingerprint [skip ci]"
           git push || echo "No changes to push"
 
       - name: Upload Screenshots
