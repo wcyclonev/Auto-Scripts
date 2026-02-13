@@ -25,6 +25,14 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'scripts/requirements.txt'
 
+      - name: Cache Browser Data
+        uses: actions/cache@v4
+        with:
+          path: scripts/.browser_cache
+          key: browser-cache-${{ runner.os }}-${{ hashFiles('scripts/VALTORIA_DISCORD_SESSION.json') }}
+          restore-keys: |
+            browser-cache-${{ runner.os }}-
+
       - name: Install dependencies
         working-directory: scripts
         run: pip install -r requirements.txt -q > /dev/null 2>&1
