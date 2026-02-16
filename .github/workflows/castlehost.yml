@@ -2,7 +2,7 @@ name: Castlehost Auto Renew
 
 on:
   schedule:
-    - cron: '0 1 * * *'    # 上午09:00 (UTC+8)
+    - cron: '0 23 * * *'    # 上午07:00 (UTC+8)
   workflow_dispatch:  # 手动触发
 
 jobs:
