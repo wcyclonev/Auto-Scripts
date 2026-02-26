@@ -31,11 +31,13 @@ jobs:
           GITHUB_ACTIONS: 'true'
         run: python main.py
       
-      - name: Upload screenshots
+      - name: Upload screenshots and logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: runox-screenshots
-          path: scripts/screenshots/
+          name: runox-logs
+          path: |
+            scripts/screenshots/
+            scripts/*.json
           if-no-files-found: ignore
           retention-days: 7
