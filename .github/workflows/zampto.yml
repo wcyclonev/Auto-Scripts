@@ -15,7 +15,7 @@ jobs:
       - name: Checkout private repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/Zampto-Auto-Renew  # 私库的仓库位置
+          repository: kamancyclone/Zampto-Auto-Renew  # 私库的仓库位置
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: scripts
 
@@ -45,6 +45,8 @@ jobs:
 
       - name: Install dependencies
         working-directory: scripts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pip install -r requirements.txt -q > /dev/null 2>&1
 
       - name: Run script
@@ -54,6 +56,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           SOCKS_PROXY_URL: ${{ secrets.SOCKS_PROXY_URL }}
           USE_GOST_PROXY: ${{ secrets.SOCKS_PROXY_URL != '' && 'true' || 'false' }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
 
       - name: Upload screenshots
