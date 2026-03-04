@@ -93,7 +93,7 @@ jobs:
           SOCKS_PROXY_URL: ${{ secrets.SOCKS_PROXY_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 固定配置
-          PROXY_SERVER: socks5://127.0.0.1:1080
+          USE_GOST_PROXY: true
         run: python main.py
       
       - name: Upload screenshots
