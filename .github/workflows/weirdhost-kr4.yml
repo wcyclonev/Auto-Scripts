@@ -1,4 +1,4 @@
-name: Weirdhost-KR4 Auto Renew
+name: Weirdhost-Nodejs Auto Renew
 
 on:
   schedule:
