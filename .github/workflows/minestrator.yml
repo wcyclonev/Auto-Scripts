@@ -1,9 +1,9 @@
 name: MineStrator Auto Keepalive
 
 on:
-  schedule:
-    # 每2小时运行一次
-    - cron: '0 */2 * * *'
+  # schedule:
+  #   # 每2小时运行一次
+  #   - cron: '0 */2 * * *'
   workflow_dispatch:  # 支持手动触发
 
 jobs:
