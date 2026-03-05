@@ -33,11 +33,11 @@ jobs:
 
       - name: Start gost proxy (if proxy configured)
         env:
-          OPTIKLINK_SOCKS_PROXY: ${{ secrets.OPTIKLINK_SOCKS_PROXY }}
-        if: ${{ env.OPTIKLINK_SOCKS_PROXY != '' }}
+          SOCKS_PROXY_URL: ${{ secrets.SOCKS_PROXY_URL }}
+        if: ${{ env.SOCKS_PROXY_URL != '' }}
         run: |
           # 启动 gost 作为后台进程，将带认证的 SOCKS5 转换为本地无认证代理
-          nohup gost -L=socks5://127.0.0.1:1080 -F=$OPTIKLINK_SOCKS_PROXY > /tmp/gost.log 2>&1 &
+          nohup gost -L=socks5://127.0.0.1:1080 -F=$SOCKS_PROXY_URL > /tmp/gost.log 2>&1 &
           sleep 3
           echo "Gost proxy started on 127.0.0.1:1080"
           # 验证 gost 是否运行
@@ -54,8 +54,9 @@ jobs:
           DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          OPTIKLINK_SOCKS_PROXY: ${{ secrets.OPTIKLINK_SOCKS_PROXY }}
-          USE_GOST_PROXY: ${{ secrets.OPTIKLINK_SOCKS_PROXY != '' && 'true' || 'false' }}
+          SOCKS_PROXY_URL: ${{ secrets.SOCKS_PROXY_URL }}
+          USE_GOST_PROXY: ${{ secrets.SOCKS_PROXY_URL != '' && 'true' || 'false' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
 
       - name: Upload screenshots
