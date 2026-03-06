@@ -29,53 +29,36 @@ jobs:
           SOCKS_PROXY_URL: ${{ secrets.SOCKS_PROXY_URL }}
         run: |
           if [ -z "$SOCKS_PROXY_URL" ]; then
-            echo "⚠️ 未配置 SOCKS 代理，跳过代理设置"
+            echo "⚠️ 未配置 SOCKS 代理，跳过"
             exit 0
           fi
           
-          echo "配置的代理: ${SOCKS_PROXY_URL%%:*}://***"
+          echo "🌐 配置代理: ${SOCKS_PROXY_URL%%:*}://***"
           
-          # 下载并安装 Gost
+          # 安装 Gost
           wget -q https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz
           gunzip gost-linux-amd64-2.11.5.gz
           sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost
           sudo chmod +x /usr/local/bin/gost
-          echo "✅ Gost 安装完成"
           
           # 启动 Gost
           nohup gost -L=:1080 -F="$SOCKS_PROXY_URL" > gost.log 2>&1 &
           sleep 5
-          echo "✅ Gost 已启动"
           
-          # 验证进程
-          if pgrep -x "gost" > /dev/null; then
-            echo "✅ Gost 进程运行正常"
+          # 验证
+          if pgrep -x "gost" > /dev/null && netstat -tuln | grep -q ":1080 "; then
+            echo "✅ Gost 代理已启动"
           else
-            echo "❌ Gost 进程未运行"
-            cat gost.log 2>/dev/null || echo "无 gost.log 文件"
-            exit 1
-          fi
-          
-          # 验证端口监听
-          echo "检查端口 1080 监听状态..."
-          if netstat -tuln | grep -q ":1080 "; then
-            echo "✅ 端口 1080 正在监听"
-          else
-            echo "❌ 端口 1080 未监听"
-            netstat -tuln | grep 1080 || echo "未找到 1080 端口"
-            cat gost.log 2>/dev/null || echo "无 gost.log 文件"
+            echo "❌ Gost 启动失败"
+            cat gost.log 2>/dev/null
             exit 1
           fi
           
           # 测试代理连接
-          echo "测试代理连接..."
           if curl -x socks5://127.0.0.1:1080 https://www.google.com -I --max-time 10 --silent --fail > /dev/null 2>&1; then
             echo "✅ 代理连接测试成功"
           else
-            echo "⚠️ 代理连接测试失败（可能是上游代理问题）"
-            echo "Gost 日志:"
-            cat gost.log 2>/dev/null || echo "无 gost.log 文件"
-            echo "注意: 这可能不影响实际使用，继续执行..."
+            echo "⚠️ 代理连接测试失败（可能是上游代理问题，继续执行）"
           fi
       
       - name: Install dependencies
