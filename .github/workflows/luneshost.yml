@@ -1,0 +1,44 @@
+name: Luneshost Auto Login
+
+on:
+  # 每周五 UTC 12:00 运行（北京时间 20:00）
+  schedule:
+    - cron: '0 12 * * 5'
+  # 手动触发
+  workflow_dispatch:
+
+jobs:
+  login:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/Game-Auto-Scripts
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: scripts
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: scripts/Luneshost
+        run: pip install -r requirements.txt -q > /dev/null 2>&1
+
+      - name: Run login script
+        working-directory: scripts/Luneshost
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: scripts/Luneshost/screenshots/
+          retention-days: 7

@@ -1,0 +1,43 @@
+name: HidenCloud Auto Renew
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # UTC 4点 = 北京时间 12点
+  workflow_dispatch:
+
+jobs:
+  renewal:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout private repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.repository_owner }}/Game-Auto-Scripts
+        token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        path: scripts
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      working-directory: scripts/Hidencloud
+      run: pip install -r requirements.txt -q > /dev/null 2>&1
+
+    - name: Run script
+      working-directory: scripts/Hidencloud
+      env:
+        REMEMBER_WEB_COOKIE: ${{ secrets.REMEMBER_WEB_COOKIE }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: python main.py
+
+    - name: Upload screenshots
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: screenshots-${{ github.run_id }}
+        path: scripts/Hidencloud/screenshots/
+        retention-days: 3
