@@ -1,0 +1,45 @@
+name: Axenthost Auto Claim
+
+on:
+  schedule:
+    # 每小时的第5分钟运行（UTC时间）
+    - cron: '5 * * * *'
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/Game-Auto-Scripts
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: scripts
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        working-directory: scripts/Axenthost
+        run: pip install -r requirements.txt -q > /dev/null 2>&1
+      
+      - name: Run claim script
+        working-directory: scripts/Axenthost
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+      
+      - name: Upload server status artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-status-${{ github.run_number }}
+          path: scripts/Axenthost/*.json
+          retention-days: 7
+          if-no-files-found: ignore
