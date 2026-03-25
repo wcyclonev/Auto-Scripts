@@ -21,35 +21,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install system dependencies (xvfb for headful mode)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb x11-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic
-
-      - name: Install gost (proxy converter)
-        run: |
-          wget -q https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz
-          gunzip gost-linux-amd64-2.11.5.gz
-          chmod +x gost-linux-amd64-2.11.5
-          sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost
-
-      - name: Start gost proxy (if proxy configured)
-        env:
-          CLOUDBLAZE_SOCKS_PROXY: ${{ secrets.CLOUDBLAZE_SOCKS_PROXY }}
-        if: ${{ env.CLOUDBLAZE_SOCKS_PROXY != '' }}
-        run: |
-          # 启动 gost 作为后台进程，将带认证的 SOCKS5 转换为本地无认证代理
-          nohup gost -L=socks5://127.0.0.1:1080 -F=$CLOUDBLAZE_SOCKS_PROXY > /tmp/gost.log 2>&1 &
-          sleep 3
-          echo "Gost proxy started on 127.0.0.1:1080"
-          # 验证 gost 是否运行
-          ps aux | grep gost || echo "Warning: gost may not be running"
-          # 测试代理连接
-          echo "Testing proxy connection..."
-          curl -x socks5://127.0.0.1:1080 https://httpbin.org/ip --max-time 10 || echo "Proxy test failed"
-          # 显示 gost 日志
-          echo "Gost log:"
-          cat /tmp/gost.log || echo "No gost log found"
+      - name: Set up WARP
+        uses: fscarmen/warp-on-actions@v1.4
+        with:
+          stack: dual
+          mode: client
 
       - name: Install dependencies
         working-directory: scripts/Cloudblaze
@@ -58,10 +34,8 @@ jobs:
       - name: Run script
         working-directory: scripts/Cloudblaze
         env:
-          CLOUDBLAZE_SOCKS_PROXY: ${{ secrets.CLOUDBLAZE_SOCKS_PROXY }}
-          USE_GOST_PROXY: ${{ secrets.CLOUDBLAZE_SOCKS_PROXY != '' && 'true' || 'false' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python main.py
+        run: python main.py
 
       - name: Upload screenshots
         if: always()
